@@ -1,6 +1,8 @@
 # Pycache are evil, don't produce them
 from multiprocessing.sharedctypes import Value
+import re
 import sys
+from unicodedata import category
 sys.dont_write_bytecode = True
 
 # universal import
@@ -81,7 +83,7 @@ class account():
         INPUT SIGNATURE:
             1. action: "string" (E, I, L, C) stand for Expense, Income, Lend, Collect
             2. amount: float
-            3. date: "string" ("2022-27-06")
+            3. date: "string" ("2022-06-27")
             4. category: int (1, 2, 3, 4, etc.)
             5. rewards: float (2, 0.02, etc.)
         """
@@ -89,12 +91,44 @@ class account():
         # convert date variable to datetime object
         date = helper.datetime_convert(date)
 
+        # record the transaction into history
         self.history["Action"].append(action)
         self.history["Amount"].append(amount)
         self.history["Date"].append(date),
         self.history["Category"].append(category)
         self.history["Rewards"].append(rewards)
 
+        # update real time attributes
+        if (action == "E") or (action == "L"):
+            self.value -= amount
+            self.rewards += amount * rewards
+        else:
+            self.value += amount
+            self.rewards -= amount * rewards
+
     #------------------------------
 
-    
+    def redeem_rewards(self, amount, rate, date):
+        """
+        DESCRIPTION:
+            Redeem the rewards within self.rewards and transfer it into the main account
+
+        INPUT SIGNATURE:
+            1. amount (float): the amount of rewards to be redeem
+            2. rate (float): amount of the currency earned from a unit of reward; this should be ONE for cash reward
+                and 0.01 for 1 cent per point
+            3. date (string): "2022-06-27"
+        """
+
+        # update the new amount of remaining rewards
+        self.rewards -= amount
+        
+        # calculate the real value of the redeemed rewards
+        amount_redeemed = amount * rate
+
+        # add the redeemed rewards as a transaction
+        self.transaction(action = "I",\
+            amount = amount_redeemed,\
+            date = date,\
+            category = 0,\
+            rewards = 0)
