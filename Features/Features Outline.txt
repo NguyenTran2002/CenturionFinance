@@ -1,0 +1,13 @@
+HERE ARE THE INTENDED FEATURES TO BE IMPLEMENTED:
+
+#------------------------------
+ACCOUNT CLASS
+
+    DESCRIPTION:
+        1. Each instance of the class keeps track of each personal account (banks, credit cards, investments, etc.)
+        2. Quick snap-shot information shall be accessible (total value, etc.)
+        3. A full history of all transactions is also stored (in a csv table, for now, and a database in the future?)
+        
+    NOTES:
+        1. To avoid the horrendous runtime of the portfolio class, each additional transaction should update all affected metrics
+            within the account class
