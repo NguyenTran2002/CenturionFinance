@@ -3,6 +3,7 @@ from multiprocessing.sharedctypes import Value
 import re
 import sys
 from unicodedata import category
+import attr
 
 from matplotlib.pyplot import hist
 sys.dont_write_bytecode = True
@@ -20,25 +21,14 @@ class account():
 
     #------------------------------
 
-    def __init__(self, name, value, currency, account_type, rewards_type, rewards):
+    def __init__(self):
 
-        # the name of the account
-        self.name = name
-
-        # real time value of the account
-        self.value = value # start with an initial value
-
-        # the currency of the account
-        self.currency = currency # user input string
-
-        # type of the account
-        self.account_type = account_type # this value will be actively edited upon the creation of an account
-
-        # rewards type of the account
-        self.rewards_type = rewards_type # ("points", "miles", "cash")
-
-        # total amount of rewards
-        self.rewards = rewards
+        self.name = None
+        self.value = None
+        self.currency = None
+        self.account_type = None
+        self.rewards_type = None
+        self.rewards = None
 
         #------------------------------
         # CRITICAL PART
@@ -59,6 +49,34 @@ class account():
 
         # END OF CRITICAL PART
         #------------------------------
+
+
+    #------------------------------
+
+    def set_attributes(self, name, value, currency, account_type, rewards_type, rewards):
+
+        """
+        DESCRIPTION:
+            Set the relevant attributes of an account to the desired value.
+        """
+
+        # the name of the account
+        self.name = name
+
+        # real time value of the account
+        self.value = value # start with an initial value
+
+        # the currency of the account
+        self.currency = currency # user input string
+
+        # type of the account
+        self.account_type = account_type # this value will be actively edited upon the creation of an account
+
+        # rewards type of the account
+        self.rewards_type = rewards_type # ("points", "miles", "cash")
+
+        # total amount of rewards
+        self.rewards = rewards
 
     #------------------------------
     # GETTING ATTRIBUTES FUNCTION GROUP
@@ -143,21 +161,6 @@ class account():
 
     #------------------------------
 
-    def export_history(self):
-        """
-        DESCRIPTION:
-            Export the account's history into a csv file for future pick-ups
-        """
-
-        # read the internal history as a Pandas dataframe
-        history_df = pd.DataFrame(self.history)
-
-        # export the dataframe as a csv
-        file_path = "Internal Data/" + self.name + "_history.csv"
-        history_df.to_csv(file_path, index = False)
-
-    #------------------------------
-
     def export_attributes(self):
         """
         DESCRIPTION:
@@ -176,6 +179,44 @@ class account():
         file_path = "Internal Data/" + self.name + "_attributes.csv"
         attributes_df.to_csv(file_path, index = False)
 
+    #------------------------------
+
+    def export_history(self):
+        """
+        DESCRIPTION:
+            Export the account's history into a csv file for future pick-ups
+        """
+
+        # read the internal history as a Pandas dataframe
+        history_df = pd.DataFrame(self.history)
+
+        # export the dataframe as a csv
+        file_path = "Internal Data/" + self.name + "_history.csv"
+        history_df.to_csv(file_path, index = False)
+
+
+    #------------------------------
+
+    def load_attributes(self, file_path):
+        """
+        DESCRIPTION:
+            Load the attributes of an account from a csv file
+            ALWAYS LOAD ATTRIBUTES BEFORE LOADING HISTORY
+
+        INPUT SIGNATURE:
+            1. file_path (string): the path, including the name, of the file from the folder of this code
+        """
+
+        # read the csv file into a Pandas dataframe
+        attributes_df = pd.read_csv(file_path)
+
+        # write the attributes to the account
+        self.set_attributes(attributes_df["Name"][0],\
+            attributes_df["Value"][0],\
+            attributes_df["Currency"][0],\
+            attributes_df["Account Type"][0],\
+            attributes_df["Rewards Type"][0],\
+            attributes_df["Rewards"][0])
 
     #------------------------------
 
@@ -189,4 +230,4 @@ class account():
         """
 
         # read the csv file as a Pandas dataframe
-        history_df = pd.DataFrame
+        history_df = pd.read_csv(file_path)
