@@ -161,6 +161,17 @@ class account():
 
     #------------------------------
 
+    def export_data(self):
+        """
+        DESCRIPTION:
+            1. A master function that calls both export_attributes and export_history in the correct order.
+        """
+
+        self.export_attributes()
+        self.export_history()
+
+    #------------------------------
+
     def export_attributes(self):
         """
         DESCRIPTION:
@@ -194,6 +205,20 @@ class account():
         file_path = "Internal Data/" + self.name + "_history.csv"
         history_df.to_csv(file_path, index = False)
 
+    #------------------------------
+
+    def load_data(self, account_name):
+        """
+        DESCRIPTION:
+            A master function that calls load_attributes then load_history in the correct order.
+            It also simplifies somewhat the function call
+        """
+
+        attributes_path = "Internal Data/" + account_name + "_attributes.csv"
+        history_path = "Internal Data/" + account_name + "_history.csv"
+
+        self.load_attributes(attributes_path)
+        self.load_history(history_path)
 
     #------------------------------
 
@@ -231,3 +256,11 @@ class account():
 
         # read the csv file as a Pandas dataframe
         history_df = pd.read_csv(file_path)
+        history_df['Date'] = pd.to_datetime(history_df['Date']) # convert to datetime for ease of use in the future
+
+        # convert each column into a list and load into the internal data structure
+        self.history["Action"] = history_df["Action"].to_list()
+        self.history["Amount"] = history_df["Amount"].to_list()
+        self.history["Date"] = history_df["Date"].to_list()
+        self.history["Category"] = history_df["Category"].to_list()
+        self.history["Rewards"] = history_df["Rewards"].to_list()
