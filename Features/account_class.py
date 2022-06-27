@@ -3,6 +3,8 @@ from multiprocessing.sharedctypes import Value
 import re
 import sys
 from unicodedata import category
+
+from matplotlib.pyplot import hist
 sys.dont_write_bytecode = True
 
 # universal import
@@ -18,7 +20,10 @@ class account():
 
     #------------------------------
 
-    def __init__(self, value, currency, account_type, rewards_type, rewards):
+    def __init__(self, name, value, currency, account_type, rewards_type, rewards):
+
+        # the name of the account
+        self.name = name
 
         # real time value of the account
         self.value = value # start with an initial value
@@ -57,6 +62,9 @@ class account():
 
     #------------------------------
     # GETTING ATTRIBUTES FUNCTION GROUP
+
+    def get_name(self):
+        return self.name
 
     def get_value(self):
         return self.value
@@ -132,3 +140,53 @@ class account():
             date = date,\
             category = 0,\
             rewards = 0)
+
+    #------------------------------
+
+    def export_history(self):
+        """
+        DESCRIPTION:
+            Export the account's history into a csv file for future pick-ups
+        """
+
+        # read the internal history as a Pandas dataframe
+        history_df = pd.DataFrame(self.history)
+
+        # export the dataframe as a csv
+        file_path = "Internal Data/" + self.name + "_history.csv"
+        history_df.to_csv(file_path, index = False)
+
+    #------------------------------
+
+    def export_attributes(self):
+        """
+        DESCRIPTION:
+            1. Export the latest attributes of the account into a csv file with ONE line
+            2. Each column header is the name of the attribute; the single entry is the value
+        """
+
+        # build the data structure for the Pandas dataframe
+        data = {"Name":[self.name], "Value":[self.value], "Currency":[self.currency], "Account Type":[self.account_type],\
+            "Rewards Type":[self.rewards_type], "Rewards":[self.rewards]}
+
+        # create the Pandas dataframe
+        attributes_df = pd.DataFrame(data)
+
+        # export the Pandas dataframe as csv
+        file_path = "Internal Data/" + self.name + "_attributes.csv"
+        attributes_df.to_csv(file_path, index = False)
+
+
+    #------------------------------
+
+    def load_history(self, file_path):
+        """
+        DESCRIPTION:
+            Load the history of the account from a csv file
+
+        INPUT SIGNATURE:
+            1. file_path (string): the path, including the name, of the file from the folder of this code
+        """
+
+        # read the csv file as a Pandas dataframe
+        history_df = pd.DataFrame

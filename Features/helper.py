@@ -12,7 +12,7 @@ from universal_imports import *
 def datetime_convert(target_string):
     """
     DESCRIPTION
-        Convert a simple YY-MM-DD to a datetime object
+        Convert a simple YYYY-MM-DD to a datetime object
     """
 
-    pass
+    return pd.to_datetime(target_string)

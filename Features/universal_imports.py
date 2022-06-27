@@ -32,7 +32,7 @@ sns.set(rc={"axes.facecolor":"white", "figure.facecolor":"white"})
 from enum import unique
 from logging import raiseExceptions
 
-import Flask
+import flask
 
 #------------------------------
 # DATABASE IMPORT
